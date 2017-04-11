@@ -1,5 +1,5 @@
 'use strict';
-const electron = require('electron');
+const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
 class Window {
@@ -14,14 +14,17 @@ class Window {
     });
   }
   create() {
-    this.window = new electron.BrowserWindow({
-      width: 300,
-      height: 200,
+    // const Screen = require('screen');
+    // console.log(screen.getPrimaryDisplay().workAreaSize());
+    this.window = new BrowserWindow({
+      width: 400,
+      height: 300,
       transparent: true,
       frame: false,
       resizable: false,
       alwaysOnTop: true,
     });
+    // this.window.setIgnoreMouseEvents(true);
     this.window.loadURL(url.format({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file:',
@@ -29,8 +32,8 @@ class Window {
     }));
     // this.window.webContents.openDevTools();
     this.window.on('closed', () => { this.window = null; });
+    // console.log(electron.screen.getPrimaryDisplay().workAreaSize);
   }
 }
-let window = new Window(electron.app);
-
+let window = new Window(app);
 // You can also put them in separate files and require them here.
