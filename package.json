@@ -9,7 +9,9 @@
   "devDependencies": {
     "jquery": "^3.2.1",
     "less": "^2.7.2",
-    "sleep-async": "^1.0.1"
+    "slackbots": "^1.0.2",
+    "sleep-async": "^1.0.1",
+    "twitter": "^1.7.1"
   },
   "scripts": {
     "start": "electron .",

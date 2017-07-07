@@ -1,4 +1,17 @@
+
 body {
     overflow: hidden;
-    margin-bottom: 3em;
+    width: 100vw;
+    height: 100vh;
+    padding: 0.5em;
+}
+
+.colored{
+    background-color: rgba(80%, 90%, 80%,0.8);
+}
+
+.voice {
+    position: relative;
+    top: 0%;
+    height: 100%;
 }

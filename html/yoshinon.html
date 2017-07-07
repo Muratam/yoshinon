@@ -4,12 +4,15 @@
 <body>
   <link rel="stylesheet" href="style.css">
   <div align="right">
-    <img src="./yoshinon.png " style="height:100vh;" />
+    <img src="./yoshinon.png" style="height:100vh;" onclick="clicked()" />
   </div>
 </body>
 <script>
-  const $ = require("jQuery ");
-  const { ipcRenderer } = require("electron ");
+  const $ = require("jQuery");
+  const { ipcRenderer } = require("electron");
+  function clicked() {
+    ipcRenderer.send("clicked", "");
+  }
 
 </script>
 

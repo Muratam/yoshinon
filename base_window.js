@@ -35,7 +35,7 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
       frame: false,
       movable: false,
       resizable: false,
-      // hasShadow: false,
+      hasShadow: false,
     };
     // overwrite if not exists
     for (const k in defaults) {
@@ -86,23 +86,21 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
     options.width = 1;
     options.height = 1;
     const child = new BaseBrowserWindow(options);
+    let newX = x + Math.floor(relX * width) - width;
+    let newY = y + Math.floor(relY * height) - height;
+    const directions = {
+      'up': [0, -newHeight],
+      'down': [0, newHeight],
+      'left': [-newWidth, 0],
+      'right': [newWidth, 0],
+    };
+    if (direction in directions) {
+      newX += directions[direction][0];
+      newY += directions[direction][1];
+    }
+    child.bounds = {x: newX, y: newY, width: newWidth, height: newHeight};
     child.once('ready-to-show', () => {
-      let newX = x + Math.floor(relX * width) - width;
-      let newY = y + Math.floor(relY * height) - height;
-      const directions = {
-        'up': [0, -newHeight],
-        'down': [0, newHeight],
-        'left': [-newWidth, 0],
-        'right': [newWidth, 0],
-      };
-      if (direction in directions) {
-        newX += directions[direction][0];
-        newY += directions[direction][1];
-      }
-      // child.setSize(newWidth, newHeight, true);
-      // child.setPosition(newX, newY, true);
-      child.setBounds(
-          {x: newX, y: newY, width: newWidth, height: newHeight}, true);
+      child.setBounds(child.bounds, true);
       child.setParentWindow(this);
     });
     return child;

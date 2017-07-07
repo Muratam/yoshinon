@@ -1,17 +1,45 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" href="./umi/css/bootstrap.min.css">
+<link rel="stylesheet" href="style.css">
 
-
-<body>
-  <link rel="stylesheet" href="style.css">
-  <div align="right">
-    <span id="text">そなたーぶおおーーー</span>
+<body class="colored">
+  <div id="contents" style="line-height:1.2;">
   </div>
 </body>
 <script>
-  const $ = require("jQuery ");
-  const { ipcRenderer } = require("electron ");
-  //ipcRenderer.on("eval ", (event, message) => { eval(message);});
+  const $ = require("jquery");
+  const { ipcRenderer } = require("electron");
+  function changeVoice(msg, media = true) {
+    return $("#contents").animate({ opacity: 0 }, 720, function () {
+      if (!media) {
+        $("#contents").html(`<div id="voice" class="voice"></div>`);
+        $("#voice").text(msg);
+      } else {
+        const [img, head, text] = JSON.parse(msg);
+        $("#contents").html(`
+          <div class="media">
+            <a class="media-left">
+              <img style="height:3em;opacity:0.7" alt="" id="icon">
+            </a>
+            <div class="media-body">
+              <strong id="head"></strong>
+              <div id="voice" class="voice"></div>
+            </div>
+          </div>`);
+        $("#icon").attr("src", img);
+        $("#head").text(head);
+        $("#voice").text(text);
+      }
+    }).animate({ opacity: 1 }, 720);
+  }
+  ipcRenderer.on("voice", (evt, msg) => {
+    changeVoice(msg, false);
+  });
+  ipcRenderer.on("media-voice", (evt, msg) => {
+    changeVoice(msg, true);
+  });
+  changeVoice("ずいぶんと遅い目覚めでしてー、今日のよき日は始まっていますよー", false);
 
 </script>
 
