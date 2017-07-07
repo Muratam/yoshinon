@@ -1,29 +1,22 @@
 'use strict';
 const {BaseWindow, BaseBrowserWindow} = require('./base_window');
 const {sleep} = require('sleep-async')();
-const uncomment = (func) => func.toString().match(/\/\*([^]*)\*\//)[1];
-// uncomment(()=>{/* hoge */}) => hoge
 class MainWindow extends BaseWindow {
   onCreate() {
     const size = this.screen.getPrimaryDisplay().size;
-    const window = new BaseBrowserWindow({
-      width: Math.floor(size.width * 0.3),
-      height: size.width / 20,
+    const yoshinon = new BaseBrowserWindow({
+      width: size.width / 10,
+      height: size.width / 10,
       transparent: true,
     });
-    window.loadFile('yoshinon.html');
-    window.once('ready-to-show', () => {
-      window.moveToRightBottom();
-      const child =
-          window.createChild({transparent: false}, 'up', 1.0, 1.0, 1.0, 4.0);
-      child.loadFile('index.html');
-      child.once('ready-to-show', () => {
-        child.webContents.send('document.write', `
-          <h1> hoge </h1>
-        `);
-      });
+    yoshinon.loadFile('html/yoshinon.html');
+    yoshinon.once('ready-to-show', () => {
+      yoshinon.moveToRightBottom();
+      const voice = yoshinon.createChild(
+          {transparent: false}, 'left', 1.3, 1.5, 2.5, 0.5);
+      voice.loadFile('html/voice.html');
     });
-    return window;
+    return yoshinon;
   }
 }
 let mainWindow = new MainWindow();

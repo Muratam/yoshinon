@@ -45,6 +45,8 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
     // super.setIgnoreMouseEvents(true);
     // super.maximize();
     super.once('ready-to-show', () => {super.show()});
+    const {screen} = require('electron');
+    this.screenSize = screen.getPrimaryDisplay().size;
   }
   loadFile(filepath) {
     this.loadURL(url.format({
@@ -54,12 +56,22 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
     }));
   }
   moveToRightBottom() {
-    const {screen} = require('electron');
-    const size = screen.getPrimaryDisplay().size;
     const [width, height] = this.getSize();
-    const x = size.width - width;
-    const y = size.height - height;
+    const x = this.screenSize.width - width;
+    const y = this.screenSize.height - height;
     this.setPosition(x, y, true);
+  }
+  setPosition(x, y, animate = true) {
+    const [width, height] = this.getSize();
+    x = Math.min(this.screenSize.width - width, x);
+    y = Math.min(this.screenSize.height - height, y);
+    super.setPosition(x, y, animate);
+  }
+  setBounds(bounds, animate = true) {
+    const {x, y, width, height} = bounds;
+    bounds.x = Math.min(this.screenSize.width - width, x);
+    bounds.y = Math.min(this.screenSize.height - height, y);
+    super.setBounds(bounds, animate);
   }
   createChild(
       options = {},      // FIXME: options will be overwrite !!
@@ -67,16 +79,16 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
       relX = 1.0, relY = 1.0, relWidth = 1.0, relHeight = 1.0) {
     const [x, y] = this.getPosition();
     const [width, height] = this.getSize();
+    const newWidth = Math.floor(relWidth * width);
+    const newHeight = Math.floor(relHeight * height);
     options.x = x;
     options.y = y;
-    options.width = width;
-    options.height = height;
+    options.width = 1;
+    options.height = 1;
     const child = new BaseBrowserWindow(options);
     child.once('ready-to-show', () => {
-      let newX = Math.floor(relX * x);
-      let newY = Math.floor(relY * y);
-      const newWidth = Math.floor(relWidth * width);
-      const newHeight = Math.floor(relHeight * height);
+      let newX = x + Math.floor(relX * width) - width;
+      let newY = y + Math.floor(relY * height) - height;
       const directions = {
         'up': [0, -newHeight],
         'down': [0, newHeight],
@@ -87,6 +99,8 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
         newX += directions[direction][0];
         newY += directions[direction][1];
       }
+      // child.setSize(newWidth, newHeight, true);
+      // child.setPosition(newX, newY, true);
       child.setBounds(
           {x: newX, y: newY, width: newWidth, height: newHeight}, true);
       child.setParentWindow(this);
@@ -94,3 +108,6 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
     return child;
   }
 }
+
+exports.uncomment = (func) => func.toString().match(/\/\*([^]*)\*\//)[1];
+// uncomment(()=>{/* hoge */}) => "hoge"
