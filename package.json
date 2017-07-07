@@ -7,7 +7,9 @@
     "electron": "^1.6.2"
   },
   "devDependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "less": "^2.7.2",
+    "sleep-async": "^1.0.1"
   },
   "scripts": {
     "start": "electron .",

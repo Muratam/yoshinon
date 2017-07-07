@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 
-<body>
-  <link rel="stylesheet" href="style.css">
-  <img src="./hoge.png" style="height:100%;right:0;position:absolute;" />
-</body>
-
 <script>
-  require('./renderer.js');
-  document.write("<h1>hoge</h1>");
+  const { ipcRenderer } = require("electron");
+  ipcRenderer.on("document.write", (event, message) => {
+    document.write(message);
+  })
+  ipcRenderer.on("eval", (event, message) => {
+    eval(message);
+  });
+  ipcRenderer.on("msg", (event, message) => {
+    console.log(message);
+  });
 
 </script>
 

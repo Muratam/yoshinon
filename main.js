@@ -1,39 +1,40 @@
 'use strict';
-const {app, BrowserWindow} = require('electron');
-const path = require('path');
-const url = require('url');
-class Window {
-  constructor(app) {
-    this.app = app;
-    this.app.on('ready', this.create);
-    this.app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') this.app.quit();
-    });
-    this.app.on('activate', () => {
-      if (this.window === null) this.create();
-    });
-  }
-  create() {
-    // const Screen = require('screen');
-    // console.log(screen.getPrimaryDisplay().workAreaSize());
-    this.window = new BrowserWindow({
-      width: 400,
-      height: 300,
+const {BaseWindow, BaseBrowserWindow} = require('./base_window');
+const {sleep} = require('sleep-async')();
+const uncomment = (func) => func.toString().match(/\/\*([^]*)\*\//)[1];
+// uncomment(()=>{/* hoge */}) => hoge
+class MainWindow extends BaseWindow {
+  onCreate() {
+    const size = this.screen.getPrimaryDisplay().size;
+    const window = new BaseBrowserWindow({
+      width: Math.floor(size.width * 0.3),
+      height: size.width / 20,
       transparent: true,
-      frame: false,
-      resizable: false,
-      alwaysOnTop: true,
     });
-    // this.window.setIgnoreMouseEvents(true);
-    this.window.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
-    // this.window.webContents.openDevTools();
-    this.window.on('closed', () => { this.window = null; });
-    // console.log(electron.screen.getPrimaryDisplay().workAreaSize);
+    window.loadFile('yoshinon.html');
+    window.once('ready-to-show', () => {
+      window.moveToRightBottom();
+      const child =
+          window.createChild({transparent: false}, 'up', 1.0, 1.0, 1.0, 4.0);
+      child.loadFile('index.html');
+      child.once('ready-to-show', () => {
+        child.webContents.send('document.write', `
+          <h1> hoge </h1>
+        `);
+      });
+    });
+    return window;
   }
 }
-let window = new Window(app);
+let mainWindow = new MainWindow();
+
+// TODO: 位置を調整
+// TODO: ニコニコ風字幕
+// TODO: slack & twitter ふわっと
+// TODO: cat とかで twitter したい
+// TODO: よしのんインターフェース
+// TODO: iTunes置き換え(再生速度とか)
+// TODO: python/ruby/nodejs統合インターフェイス
+// TODO: 数学ノートインターフェース
+
 // You can also put them in separate files and require them here.
