@@ -33,14 +33,16 @@ class MainWindow extends BaseWindow {
       voice.on('blur', () => {
         voice.setBounds(voice.bounds);
       });
+      // voice.webContents.openDevTools();
       voice.blur();  // FIXME: dont work
       this.changeToDefaultVoice();
     });
+    /*
     this.bot = new Bot();
     this.bot.gotMessage((data) => {
       console.log(data);
       voice.webContents.send('media-voice', JSON.stringify(data));
-    });
+    });*/
 
     voice.hided = false;
     ipcMain.on('clicked', (event, msg) => {

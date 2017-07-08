@@ -3,52 +3,12 @@
 <link rel="stylesheet" href="./umi/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
 
-<body style="background-color:rgba(80%, 90%, 80%,0.8)">
+<body style="background-color:rgba(80%, 90%, 80%,0.2)">
   <div id="app"></div>
 </body>
 
 <script>
-  const Vue = require("vue/dist/vue.min");
-  const { planeVoice, mediaVoice } = require("./voice-vue");
-  const app = new Vue({
-    el: "#app",
-    template: `
-      <div style="line-height:1.2;">
-        <div v-for="voice in voices">
-          <plane v-if="! voice.image" :text="voice.text"></plane>
-          <media v-if="voice.image" :image="voice.image" :head="voice.head" :text="voice.text"></media>
-          <hr>
-        </div>
-      </div>`,
-    data: { voices: [] },
-    components: {
-      plane: planeVoice,
-      media: mediaVoice
-    }
-  });
-  const $ = require("jquery");
-  const { ipcRenderer } = require("electron");
-  function changeVoice(msg, media = true) {
-    $("html").animate({ opacity: 0 }, 720, function () {
-      if (!media) {
-        app.voices = [{ text: msg }];
-        //app.voices.push({ text: msg });
-      } else {
-        const { icon_url, channel, name, text } = JSON.parse(msg);
-        //app.voices.push({ image: icon_url, head: channel + ' ' + name, text: text });
-        app.voices = [{ image: icon_url, head: channel + ' ' + name, text: text }];
-      }
-    }).animate({ opacity: 1 }, 720);
-  }
-  ipcRenderer.on("voice", (evt, msg) => { changeVoice(msg, false) });
-  ipcRenderer.on("media-voice", (evt, msg) => { changeVoice(msg, true) });
-  changeVoice("ずいぶんと遅い目覚めでしてー、今日のよき日は始まっていますよー", false);
-  // ipcRenderer.on("hide", (evt, msg) => {
-  //   $("body").animate({ backgroundColor: "#FF0000" }, 500);
-  // });
-  // ipcRenderer.on("show", (evt, msg) => {
-  //   $("body").animate({ "background-color": "#FF0000" }, 500);
-  // });
+  require("./voice-renderer")
 
 </script>
 
