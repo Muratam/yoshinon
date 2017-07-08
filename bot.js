@@ -15,6 +15,17 @@ exports.Bot = class Bot {
     }
     return ['', './yoshinon.png'];
   }
+  getSlackUserID(username) {
+    if (!('users' in this)) {
+      this.users = this.slack.getUsers()._value.members;
+    }
+    for (const user of this.users) {
+      if (user.name === username) {
+        return user.id;
+      }
+    }
+    return '';
+  }
   getSlackChannel(id) {
     if (!('channels' in this)) {
       this.channels = this.slack.getChannels()._value.channels;
@@ -83,7 +94,10 @@ exports.Bot = class Bot {
     this.slack = new SlackBot({token: this.slack_token});
     this.slack.on('message', (data) => {
       const parsed = this._parseSlackMessage(data);
-      if (parsed) this._applyMessage(parsed);
+      if (parsed) {
+        this.slackCurrentChannel = parsed.channel;
+        this._applyMessage(parsed);
+      }
     });
     // twitter //////////////////////////////////////////
     this.twitter = new Twitter({
@@ -99,6 +113,16 @@ exports.Bot = class Bot {
       });
       stream.on('error', (e) => {console.log(e)});
     });
+  }
+  tweet(message) {
+    this.twitter.post('statuses/update', {status: message});
+  }
+  slackPost(message, channel = false) {
+    if (!channel) {
+      channel = this.slackCurrentChannel || '#test-command';
+    }
+    if (channel.startsWith('#')) channel = channel.slice(1);
+    this.slack.postMessageToChannel(channel, message, {as_user: true});
   }
   gotMessage(func) {
     this._gotMessageFunctions.push(func);

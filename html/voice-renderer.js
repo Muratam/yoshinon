@@ -45,6 +45,16 @@ const app = new Vue({
         ];
       }
     },
+    changeChannel(channel) {
+      // TODO: deprecated!!
+      this.allData[channel] = this.allData[channel] || [];
+      this.currentChannel = channel;
+      if (this.showAll) {
+        this.voices = this.allData[channel];
+      } else {
+        this.voices = [this.allData[channel][0]];
+      }
+    },
     changeVoice(msg, media) {
       const [channel, content] = this.parseContent(msg, media);
       const updateContents = () => {
@@ -76,6 +86,7 @@ const app = new Vue({
     updateChannelHistory(channel, hists) {
       hists = hists.map(h => this.parseContent(h, true)[1]);
       this.allData[channel] = hists;
+      this.changeChannel(channel);
     }
   }
 });

@@ -3,11 +3,36 @@ const {BaseWindow, BaseBrowserWindow} = require('./base_window');
 const {ipcMain} = require('electron');
 const {Bot} = require('./bot');
 const {sleep} = require('sleep-async')();
+const readline = require('readline');
+
 
 class MainWindow extends BaseWindow {
   constructor(connectBot = true) {
     super();
     this.connectBot = connectBot;
+    ipcMain.on('console.log', (evt, msg) => {console.log(JSON.parse(msg))});
+    readline.createInterface({input: process.stdin, output: process.stdout})
+        .on('line', (input) => {
+          if (input.startsWith('t ') && input.length > 2) {
+            this.bot.tweet(input.slice(2));
+          } else if (input === 't') {
+            this.bot.traceHistory(':twitter:', false, (hists) => {
+              this.voice.webContents.send(
+                  'update-channel-history',
+                  JSON.stringify([':twitter:', hists]));
+            });
+          } else if (input.startsWith('# ')) {
+            this.bot.slackPost(input.slice(2));
+          } else if (input === '#') {
+            console.log(this.bot.slackCurrentChannel);
+          } else if (input.startsWith('#')) {
+            const channel = input.split(' ')[0];
+            const text = input.split(' ').slice(1).join(' ');
+            this.bot.slackPost(text, channel);
+          } else {
+            console.log(`no : ${input}`);
+          }
+        });
   }
   changeToDefaultVoice() {
     this._changeToDefualtVoiceIndex = this._changeToDefualtVoiceIndex + 1 || 0;
@@ -41,7 +66,7 @@ class MainWindow extends BaseWindow {
     if (this.connectBot) {
       this.bot = new Bot();
       this.bot.gotMessage((data) => {
-        console.log(data);
+        // console.log(data);
         voice.webContents.send('media-voice', JSON.stringify(data));
         this.bot.traceHistory(data.channel, true, (hists) => {
           const channel = hists[0].channel;
@@ -75,11 +100,9 @@ class MainWindow extends BaseWindow {
     return this.createYoshinon();
   }
 }
-ipcMain.on('console.log', (evt, msg) => {console.log(JSON.parse(msg))});
 let mainWindow = new MainWindow(true);
-// TODO: chennel_rep / tweet_hear
-// TODO: ニコニコ風字幕一気に情報取得
-// TODO: iTunes置き換え(再生速度とかしたい)
+
+// TODO: ニコニコ風字幕一気に情報取得 (for demonstrations)
 // TODO: 数学ノートインターフェース
 
 // You can also put them in separate files and require them here.
