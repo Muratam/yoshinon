@@ -32,21 +32,25 @@ const app = new Vue({
           <hr>
         </div>
       </div>`,
-  data: {voices: []},
+  data: {voices: [], allData: {}},
   components: {plane: planeVoice, media: mediaVoice},
   methods: {
+    parseContent(msg, media) {
+      if (!media) {
+        return ['plane', {text: msg}];
+      } else {
+        const {icon_url, channel, name, text} = JSON.parse(msg);
+        return [
+          channel, {image: icon_url, head: channel + ' ' + name, text: text}
+        ];
+      }
+    },
     changeVoice(msg, media) {
+      const [channel, content] = this.parseContent(msg, media);
+      this.allData[channel] = this.allData[channel] || [];
+      this.allData[channel].unshift(content);
       const updateContents = () => {
-        if (!media) {
-          this.voices = [{text: msg}];
-          // app.voices.push({ text: msg });
-        } else {
-          const {icon_url, channel, name, text} = JSON.parse(msg);
-          // app.voices.push({ image: icon_url, head: channel + ' ' + name,
-          // text: text });
-          this.voices =
-              [{image: icon_url, head: channel + ' ' + name, text: text}];
-        }
+        this.voices = this.allData[channel];  //[content];
       };
       $('html')
           .animate({opacity: 0}, 720, updateContents)

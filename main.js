@@ -4,6 +4,7 @@ const {ipcMain} = require('electron');
 const {Bot} = require('./bot');
 class MainWindow extends BaseWindow {
   changeToDefaultVoice() {
+    this._changeToDefualtVoiceIndex = this._changeToDefualtVoiceIndex + 1 || 0;
     const text = `お昼でしてー。食はおのれを形作る大切な力ですよー
       夜遅くまで精が出ますねー、わたくしもご一緒しましょうかー
       光に満ちているのでしてーLIVEに行くのが吉でしょうー
@@ -11,7 +12,9 @@ class MainWindow extends BaseWindow {
       隣人と手をとりてー、さすれば輪を広げられるでしょうー
       いべんと…？魂を感じますー。行ってみたいのでしてー
       こころのこもった贈り物ならばー開けて確かめるがよいでしょうー
-      ふーむ…何かにとらわれている様子…これは悪しき気…`.replace(/\n/g, '\n');
+      ふーむ…何かにとらわれている様子…これは悪しき気…(
+      ${this._changeToDefualtVoiceIndex})`
+                     .replace(/\n/g, '\n');
     const message = JSON.stringify(
         Bot.toMessage('./yoshinon.png', ':play:', 'よしのん', text));
     this.voice.webContents.send('media-voice', message);
@@ -36,13 +39,15 @@ class MainWindow extends BaseWindow {
       // voice.webContents.openDevTools();
       voice.blur();  // FIXME: dont work
       this.changeToDefaultVoice();
+      this.changeToDefaultVoice();
+      this.changeToDefaultVoice();
     });
-    /*
+
     this.bot = new Bot();
     this.bot.gotMessage((data) => {
       console.log(data);
       voice.webContents.send('media-voice', JSON.stringify(data));
-    });*/
+    });
 
     voice.hided = false;
     ipcMain.on('clicked', (event, msg) => {
