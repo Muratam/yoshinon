@@ -4,20 +4,27 @@
 <link rel="stylesheet" href="style.css">
 
 <body style="background-color:rgba(80%, 90%, 80%,0.8)">
+  <div id="app">
+    {{msg}}
+  </div>
   <div id="contents" style="line-height:1.2;">
   </div>
 </body>
 <script>
+  const Vue = require("vue");
+  new Vue({
+    el: "#app",
+    data: { msg: "hoge" }
+  });
   const $ = require("jquery");
-  require("jquery-color");
   const { ipcRenderer } = require("electron");
   function changeVoice(msg, media = true) {
-    return $("#contents").animate({ opacity: 0 }, 720, function () {
+    function changeHtml() {
       if (!media) {
         $(this).html(`<div id="voice" class="voice"></div>`);
         $("#voice").text(msg);
       } else {
-        const [img, head, text] = JSON.parse(msg);
+        const { icon_url, channel, name, text } = JSON.parse(msg);
         $(this).html(`
           <div class="media">
             <a class="media-left">
@@ -28,24 +35,21 @@
               <div id="voice" class="voice"></div>
             </div>
           </div>`);
-        $("#icon").attr("src", img);
-        $("#head").text(head);
+        $("#icon").attr("src", icon_url);
+        $("#head").text(channel + " " + name);
         $("#voice").text(text);
       }
-    }).animate({ opacity: 1 }, 720);
+    }
+    $("#contents").animate({ opacity: 0 }, 720, changeHtml).animate({ opacity: 1 }, 720);
   }
-  ipcRenderer.on("voice", (evt, msg) => {
-    changeVoice(msg, false);
-  });
-  ipcRenderer.on("media-voice", (evt, msg) => {
-    changeVoice(msg, true);
-  });
-  ipcRenderer.on("hide", (evt, msg) => {
-    $("body").animate({ backgroundColor: "#FF0000" }, 500);
-  });
-  ipcRenderer.on("show", (evt, msg) => {
-    $("body").animate({ "background-color": "#FF0000" }, 500);
-  });
+  ipcRenderer.on("voice", (evt, msg) => { changeVoice(msg, false) });
+  ipcRenderer.on("media-voice", (evt, msg) => { changeVoice(msg, true) });
+  // ipcRenderer.on("hide", (evt, msg) => {
+  //   $("body").animate({ backgroundColor: "#FF0000" }, 500);
+  // });
+  // ipcRenderer.on("show", (evt, msg) => {
+  //   $("body").animate({ "background-color": "#FF0000" }, 500);
+  // });
   changeVoice("ずいぶんと遅い目覚めでしてー、今日のよき日は始まっていますよー", false);
 
 </script>

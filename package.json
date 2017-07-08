@@ -8,11 +8,11 @@
   },
   "devDependencies": {
     "jquery": "^3.2.1",
-    "jquery-color": "^1.0.0",
     "less": "^2.7.2",
     "slackbots": "^1.0.2",
     "sleep-async": "^1.0.1",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "vue": "^2.3.4"
   },
   "scripts": {
     "start": "electron .",
