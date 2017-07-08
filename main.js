@@ -24,7 +24,6 @@ class MainWindow extends BaseWindow {
     voice.once('ready-to-show', () => {
       voice.webContents.send('show');
       voice.on('focus', () => {
-        if (voice.hided) return;
         voice.setBounds({
           x: voice.bounds.x,
           y: voice.screenSize.height / 4,
@@ -37,10 +36,6 @@ class MainWindow extends BaseWindow {
         voice.setBounds(voice.bounds);
         voice.webContents.send('blur', '');
       });
-      // voice.webContents.openDevTools();
-      voice.blur();  // FIXME: dont work
-      this.changeToDefaultVoice();
-      this.changeToDefaultVoice();
       this.changeToDefaultVoice();
     });
     if (this.connectBot) {
@@ -50,20 +45,14 @@ class MainWindow extends BaseWindow {
         voice.webContents.send('media-voice', JSON.stringify(data));
         this.bot.traceHistory(data.channel, true, (hists) => {
           const channel = hists[0].channel;
-          hists = hists.slice(1);
+          // hists = hists.slice(1);
           voice.webContents.send(
               'update-channel-history', JSON.stringify([channel, hists]));
         });
       });
     }
-    voice.hided = false;
     ipcMain.on('clicked', (event, msg) => {
-      if (voice.hided) {
-        voice.show();
-      } else {
-        voice.hide();
-      }
-      voice.hided = !voice.hided;
+      this.voice.webContents.send('toggle');
     });
     this.voice = voice;
     return voice;
@@ -88,13 +77,9 @@ class MainWindow extends BaseWindow {
 }
 ipcMain.on('console.log', (evt, msg) => {console.log(JSON.parse(msg))});
 let mainWindow = new MainWindow(true);
-// TODO: channel_history展開 /tweet home展開
-// TODO: RT: ...
 // TODO: chennel_rep / tweet_hear
-// TODO: 時間経過で背景透過度自然減衰
 // TODO: ニコニコ風字幕一気に情報取得
 // TODO: iTunes置き換え(再生速度とかしたい)
-// TODO: python/ruby/nodejs統合インターフェイス
 // TODO: 数学ノートインターフェース
 
 // You can also put them in separate files and require them here.

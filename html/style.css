@@ -3,6 +3,7 @@ body {
     height: 100vh;
     overflow-x: hidden;
     overflow-y: scroll;
+    opacity:1;
 }
 .voice-wrapper{
     line-height:1.2;
@@ -22,4 +23,11 @@ body {
 .commandline-input{
     background-color:rgba(80%, 90%, 80%,0);
     padding:0em!important;
+}
+.transparent{
+    background-color:rgba(80%, 90%, 80%,0)!important;
+    opacity:0.5;
+}
+img.transparent{
+    opacity:0.5;
 }

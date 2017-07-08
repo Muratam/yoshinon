@@ -12,7 +12,7 @@ const mediaVoice = {
   template: `
       <div class="voice-innercontent">
         <a class="media-left">
-          <img style="height:3em;opacity:0.7" alt="" :src="image">
+          <img style="height:3em;" alt="" :src="image">
         </a>
         <div class="media-body">
           <strong>{{head}}</strong>
@@ -64,7 +64,11 @@ const app = new Vue({
     changeShowAll(showAll) {
       this.showAll = showAll;
       if (this.showAll) {
-        this.voices = this.allData[this.currentChannel];
+        if ($('.transparent')[0]) {
+          this.voices = [];
+        } else {
+          this.voices = this.allData[this.currentChannel];
+        }
       } else {
         this.voices = [this.allData[this.currentChannel][0]];
       }
@@ -80,6 +84,15 @@ ipcRenderer.on('voice', (evt, msg) => {app.changeVoice(msg, false)});
 ipcRenderer.on('media-voice', (evt, msg) => {app.changeVoice(msg, true)});
 ipcRenderer.on('focus', (evt, msg) => {app.changeShowAll(true)});
 ipcRenderer.on('blur', (evt, msg) => {app.changeShowAll(false)});
+let transparented = false;
+ipcRenderer.on('toggle', (evt, msg) => {
+  transparented = !transparented;
+  if (transparented) {
+    $('*').addClass('transparent')
+  } else {
+    $('*').removeClass('transparent')
+  }
+});
 ipcRenderer.on('update-channel-history', (evt, msg) => {
   const [channel, hists] = JSON.parse(msg);
   app.updateChannelHistory(channel, hists);
