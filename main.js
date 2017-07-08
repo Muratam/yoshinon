@@ -46,14 +46,14 @@ class MainWindow extends BaseWindow {
     if (this.connectBot) {
       this.bot = new Bot();
       this.bot.gotMessage((data) => {
-        this.bot.traceHistory('slack', data.channel, true, (hists) => {
+        console.log(data);
+        voice.webContents.send('media-voice', JSON.stringify(data));
+        this.bot.traceHistory(data.channel, true, (hists) => {
           const channel = hists[0].channel;
           hists = hists.slice(1);
           voice.webContents.send(
               'update-channel-history', JSON.stringify([channel, hists]));
         });
-        console.log(data);
-        voice.webContents.send('media-voice', JSON.stringify(data));
       });
     }
     voice.hided = false;
