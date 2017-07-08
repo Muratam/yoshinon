@@ -1,7 +1,7 @@
 'use strict';
 const {BaseWindow, BaseBrowserWindow} = require('./base_window');
-const {Bot} = require('./bot');
 const {ipcMain} = require('electron');
+const {Bot} = require('./bot');
 class MainWindow extends BaseWindow {
   changeToDefaultVoice() {
     const text = `お昼でしてー。食はおのれを形作る大切な力ですよー
@@ -41,30 +41,35 @@ class MainWindow extends BaseWindow {
       console.log(data);
       voice.webContents.send('media-voice', JSON.stringify(data));
     });
-    voice.hided = false;
-    this.voice = voice;
-  }
 
-  onCreate() {
+    voice.hided = false;
+    ipcMain.on('clicked', (event, msg) => {
+      if (voice.hided) {
+        voice.show();
+      } else {
+        voice.hide();
+      }
+      voice.hided = !voice.hided;
+    });
+    this.voice = voice;
+    return voice;
+  }
+  createYoshinon() {
     const size = this.screen.getPrimaryDisplay().size;
-    this.yoshinon = new BaseBrowserWindow({
+    const yoshinon = new BaseBrowserWindow({
       width: size.width / 10,
       height: size.width / 10,
     });
-    this.yoshinon.loadFile('html/yoshinon.html');
-    this.yoshinon.once('ready-to-show', () => {
-      this.yoshinon.moveToRightBottom();
+    yoshinon.loadFile('html/yoshinon.html');
+    yoshinon.once('ready-to-show', () => {
+      yoshinon.moveToRightBottom();
       this.createVoice();
     });
-    ipcMain.on('clicked', (event, msg) => {
-      if (this.voice.hided) {
-        this.voice.show();
-      } else {
-        this.voice.hide();
-      }
-      this.voice.hided = !this.voice.hided;
-    });
-    return this.yoshinon;
+    this.yoshinon = yoshinon;
+    return yoshinon;
+  }
+  onCreate() {
+    return this.createYoshinon();
   }
 }
 

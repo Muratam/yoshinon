@@ -1,13 +1,8 @@
-
 body {
     /*overflow: hidden;*/
     width: 100vw;
     height: 100vh;
     padding: 0.5em;
-}
-
-.colored{
-    background-color: rgba(80%, 90%, 80%,0.8);
 }
 
 .voice {

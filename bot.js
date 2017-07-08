@@ -2,7 +2,7 @@ const SlackBot = require('slackbots');
 const fs = require('fs');
 const Twitter = require('twitter');
 
-exports.Bot = class {
+exports.Bot = class Bot {
   getSlackUser(id) {
     if (!('users' in this)) {
       this.users = this.slack.getUsers()._value.members;
@@ -57,7 +57,7 @@ exports.Bot = class {
     this._gotMessageFunctions = [];
   }
   gotMessage(func) {
-    this._gotMessageFunctions += func;
+    this._gotMessageFunctions.push(func);
   }
   _applyMessage(icon_url, channel, name, text) {
     for (const func of this._gotMessageFunctions) {
