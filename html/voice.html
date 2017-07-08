@@ -3,21 +3,22 @@
 <link rel="stylesheet" href="./umi/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
 
-<body class="colored">
+<body style="background-color:rgba(80%, 90%, 80%,0.8)">
   <div id="contents" style="line-height:1.2;">
   </div>
 </body>
 <script>
   const $ = require("jquery");
+  require("jquery-color");
   const { ipcRenderer } = require("electron");
   function changeVoice(msg, media = true) {
     return $("#contents").animate({ opacity: 0 }, 720, function () {
       if (!media) {
-        $("#contents").html(`<div id="voice" class="voice"></div>`);
+        $(this).html(`<div id="voice" class="voice"></div>`);
         $("#voice").text(msg);
       } else {
         const [img, head, text] = JSON.parse(msg);
-        $("#contents").html(`
+        $(this).html(`
           <div class="media">
             <a class="media-left">
               <img style="height:3em;opacity:0.7" alt="" id="icon">
@@ -38,6 +39,12 @@
   });
   ipcRenderer.on("media-voice", (evt, msg) => {
     changeVoice(msg, true);
+  });
+  ipcRenderer.on("hide", (evt, msg) => {
+    $("body").animate({ backgroundColor: "#FF0000" }, 500);
+  });
+  ipcRenderer.on("show", (evt, msg) => {
+    $("body").animate({ "background-color": "#FF0000" }, 500);
   });
   changeVoice("ずいぶんと遅い目覚めでしてー、今日のよき日は始まっていますよー", false);
 

@@ -8,7 +8,7 @@ class MainWindow extends BaseWindow {
   changeToDefaultVoice() {
     sleep(3000, () => {
       this.voice.webContents.send('media-voice', JSON.stringify([
-        './yoshinon.png', '#時報でしてー',
+        './yoshinon.png', '#接続完了でしてー',
         `お昼でしてー。食はおのれを形作る大切な力ですよー
         夜遅くまで精が出ますねー、わたくしもご一緒しましょうかー
         光に満ちているのでしてーLIVEに行くのが吉でしょうー
@@ -26,13 +26,14 @@ class MainWindow extends BaseWindow {
         {transparent: true, alwaysOnTop: false}, 'left', 1.3, 1.5, 2.5, 0.5);
     voice.loadFile('html/voice.html');
     voice.once('ready-to-show', () => {
+      voice.webContents.send('show');
       voice.on('focus', () => {
         if (voice.hided) return;
         voice.setBounds({
           x: voice.bounds.x,
-          y: voice.screenSize.height / 2,
+          y: voice.screenSize.height / 4,
           width: voice.bounds.width,
-          height: voice.screenSize.height / 2,
+          height: voice.screenSize.height / 4 * 3,
         });
       });
       voice.on('blur', () => {
@@ -84,7 +85,7 @@ class Bot {
         return [user.name, user.profile.image_48];
       }
     }
-    return ['UNKNOWN', './yoshinon.png'];
+    return ['', './yoshinon.png'];
   }
   getChannel(id) {
     if (!('channels' in this)) {
@@ -95,7 +96,7 @@ class Bot {
         return '#' + channel.name;
       }
     }
-    return '#????';
+    return '';
   }
   constructor() {
     const SlackBot = require('slackbots');
@@ -106,6 +107,7 @@ class Bot {
       if (data.type == 'message') {
         const [name, icon_url] = this.getUser(data.user);
         const channel = this.getChannel(data.channel);
+        if (channel === '' || name === '') return;
         if ('text' in data)
           this.gotMessage([icon_url, name + ' ' + channel, data.text]);
       }
@@ -131,7 +133,10 @@ class Bot {
 }
 
 let mainWindow = new MainWindow();
-// TODO: ニコニコ風字幕
+// TODO: channel_history展開 /tweet home展開
+// TODO: chennel_rep / tweet_hear
+// TODO: 時間経過で背景透過度自然減衰
+// TODO: ニコニコ風字幕一気に情報取得
 // TODO: iTunes置き換え(再生速度とかしたい)
 // TODO: python/ruby/nodejs統合インターフェイス
 // TODO: 数学ノートインターフェース

@@ -35,7 +35,7 @@ exports.BaseBrowserWindow = class BaseBrowserWindow extends BrowserWindow {
       frame: false,
       movable: false,
       resizable: false,
-      hasShadow: false,
+      // hasShadow: false,
     };
     // overwrite if not exists
     for (const k in defaults) {
