@@ -3,17 +3,14 @@ const {BaseWindow, BaseBrowserWindow} = require('./base_window');
 const {ipcMain} = require('electron');
 const {Bot} = require('./bot');
 class MainWindow extends BaseWindow {
+  constructor(connectBot = true) {
+    super();
+    this.connectBot = connectBot;
+  }
   changeToDefaultVoice() {
     this._changeToDefualtVoiceIndex = this._changeToDefualtVoiceIndex + 1 || 0;
-    const text = `お昼でしてー。食はおのれを形作る大切な力ですよー
-      夜遅くまで精が出ますねー、わたくしもご一緒しましょうかー
-      光に満ちているのでしてーLIVEに行くのが吉でしょうー
-      ちひろさんが呼んでおられるのでしてーお早くーお早くー
-      隣人と手をとりてー、さすれば輪を広げられるでしょうー
-      いべんと…？魂を感じますー。行ってみたいのでしてー
-      こころのこもった贈り物ならばー開けて確かめるがよいでしょうー
-      ふーむ…何かにとらわれている様子…これは悪しき気…(
-      ${this._changeToDefualtVoiceIndex})`
+    const text = `お昼でしてー。
+      (${this._changeToDefualtVoiceIndex})`
                      .replace(/\n/g, '\n');
     const message = JSON.stringify(
         Bot.toMessage('./yoshinon.png', ':play:', 'よしのん', text));
@@ -32,9 +29,11 @@ class MainWindow extends BaseWindow {
           width: voice.bounds.width,
           height: voice.screenSize.height / 4 * 3,
         });
+        voice.webContents.send('focus', '');
       });
       voice.on('blur', () => {
         voice.setBounds(voice.bounds);
+        voice.webContents.send('blur', '');
       });
       // voice.webContents.openDevTools();
       voice.blur();  // FIXME: dont work
@@ -42,13 +41,13 @@ class MainWindow extends BaseWindow {
       this.changeToDefaultVoice();
       this.changeToDefaultVoice();
     });
-
-    this.bot = new Bot();
-    this.bot.gotMessage((data) => {
-      console.log(data);
-      voice.webContents.send('media-voice', JSON.stringify(data));
-    });
-
+    if (this.connectBot) {
+      this.bot = new Bot();
+      this.bot.gotMessage((data) => {
+        console.log(data);
+        voice.webContents.send('media-voice', JSON.stringify(data));
+      });
+    }
     voice.hided = false;
     ipcMain.on('clicked', (event, msg) => {
       if (voice.hided) {
@@ -80,7 +79,7 @@ class MainWindow extends BaseWindow {
   }
 }
 
-let mainWindow = new MainWindow();
+let mainWindow = new MainWindow(false);
 // TODO: channel_history展開 /tweet home展開
 // TODO: RT: ...
 // TODO: chennel_rep / tweet_hear

@@ -1,10 +1,24 @@
 body {
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
 }
-
-.voice {
-    position: relative;
-    top: 0%;
-    height: 100%;
+.voice-wrapper{
+    line-height:1.2;
+    background-color:rgba(80%, 90%, 80%,0.8);
+    padding: 0.5em;
+    margin-top:1.2em;
+    border-radius: 0.4em;
+}
+.voice-innercontent{
+    margin-bottom: 0.3em;
+    padding-bottom:0.3em;
+    border-bottom: 1px solid rgba(80%, 90%, 80%,0.9);
+}
+.voice-body{
+    background-color:rgba(80%, 90%, 80%,0.1);
+}
+.commandline-input{
+    background-color:rgba(80%, 90%, 80%,0);
+    padding:0em!important;
 }
