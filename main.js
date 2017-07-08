@@ -2,6 +2,8 @@
 const {BaseWindow, BaseBrowserWindow} = require('./base_window');
 const {ipcMain} = require('electron');
 const {Bot} = require('./bot');
+const {sleep} = require('sleep-async')();
+
 class MainWindow extends BaseWindow {
   constructor(connectBot = true) {
     super();
@@ -44,6 +46,12 @@ class MainWindow extends BaseWindow {
     if (this.connectBot) {
       this.bot = new Bot();
       this.bot.gotMessage((data) => {
+        this.bot.traceHistory('slack', data.channel, true, (hists) => {
+          const channel = hists[0].channel;
+          hists = hists.slice(1);
+          voice.webContents.send(
+              'update-channel-history', JSON.stringify([channel, hists]));
+        });
         console.log(data);
         voice.webContents.send('media-voice', JSON.stringify(data));
       });
@@ -78,8 +86,8 @@ class MainWindow extends BaseWindow {
     return this.createYoshinon();
   }
 }
-
-let mainWindow = new MainWindow(false);
+ipcMain.on('console.log', (evt, msg) => {console.log(JSON.parse(msg))});
+let mainWindow = new MainWindow(true);
 // TODO: channel_history展開 /tweet home展開
 // TODO: RT: ...
 // TODO: chennel_rep / tweet_hear

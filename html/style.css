@@ -1,7 +1,8 @@
 body {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 .voice-wrapper{
     line-height:1.2;

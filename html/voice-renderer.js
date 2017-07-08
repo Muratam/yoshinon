@@ -38,7 +38,8 @@ const app = new Vue({
       if (!media) {
         return ['plane', {text: msg}];
       } else {
-        const {icon_url, channel, name, text} = JSON.parse(msg);
+        const {icon_url, channel, name, text} =
+            typeof(msg) === 'string' ? JSON.parse(msg) : msg;
         return [
           channel, {image: icon_url, head: channel + ' ' + name, text: text}
         ];
@@ -67,6 +68,10 @@ const app = new Vue({
       } else {
         this.voices = [this.allData[this.currentChannel][0]];
       }
+    },
+    updateChannelHistory(channel, hists) {
+      hists = hists.map(h => this.parseContent(h, true)[1]);
+      this.allData[channel] = hists;
     }
   }
 });
@@ -75,6 +80,10 @@ ipcRenderer.on('voice', (evt, msg) => {app.changeVoice(msg, false)});
 ipcRenderer.on('media-voice', (evt, msg) => {app.changeVoice(msg, true)});
 ipcRenderer.on('focus', (evt, msg) => {app.changeShowAll(true)});
 ipcRenderer.on('blur', (evt, msg) => {app.changeShowAll(false)});
+ipcRenderer.on('update-channel-history', (evt, msg) => {
+  const [channel, hists] = JSON.parse(msg);
+  app.updateChannelHistory(channel, hists);
+});
 app.changeVoice(
     'ずいぶんと遅い目覚めでしてー、今日のよき日は始まっていますよー', false);
 // ipcRenderer.on("hide", (evt, msg) => {
