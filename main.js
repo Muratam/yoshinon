@@ -110,8 +110,7 @@ class MainWindow extends BaseWindow {
 }
 let mainWindow = new MainWindow(true);
 
-// TODO: showAll時のタブ生成 (recent activity / tw / slack / current /
-// notification )
+// TODO: showAll時のタブ (recent activity,tw,slack,notification )
 // TODO: プラグインが作りやすいようなインターフェース
 // TODO: reconnect slack
 // TODO: cli (左吹き出し)
