@@ -62,6 +62,9 @@ class MainWindow extends BaseWindow {
         voice.webContents.send('blur', '');
       });
       this.changeToDefaultVoice();
+      this.changeToDefaultVoice();
+      this.changeToDefaultVoice();
+      this.changeToDefaultVoice();
     });
     if (this.connectBot) {
       this.bot = new Bot();
@@ -92,9 +95,14 @@ class MainWindow extends BaseWindow {
     yoshinon.once('ready-to-show', () => {
       yoshinon.moveToRightBottom();
       this.createVoice();
+      this.createCLI();
     });
     this.yoshinon = yoshinon;
     return yoshinon;
+  }
+  createCLI() {
+    const cli = this.yoshinon.createChild({}, 'left', 1.3, 1.3, 2.5, 0.2);
+    cli.loadFile('html/cli.html');
   }
   onCreate() {
     return this.createYoshinon();
@@ -102,7 +110,10 @@ class MainWindow extends BaseWindow {
 }
 let mainWindow = new MainWindow(true);
 
+// TODO: showAll時のタブ生成 (recent activity / tw / slack / current /
+// notification )
+// TODO: プラグインが作りやすいようなインターフェース
+// TODO: reconnect slack
+// TODO: cli (左吹き出し)
 // TODO: ニコニコ風字幕一気に情報取得 (for demonstrations)
 // TODO: 数学ノートインターフェース
-
-// You can also put them in separate files and require them here.

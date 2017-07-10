@@ -25,7 +25,7 @@ const mediaVoice = {
 const app = new Vue({
   el: '#app',
   template: `
-      <div class="voice-wrapper">
+      <div class="voice-wrapper fukidashi">
         <div v-for="voice in voices">
           <plane v-if="! voice.image" :text="voice.text"></plane>
           <media v-if="voice.image" :image="voice.image" :head="voice.head" :text="voice.text"></media>
@@ -79,8 +79,10 @@ const app = new Vue({
         } else {
           this.voices = this.allData[this.currentChannel];
         }
+        $(this.$el).removeClass('fukidashi');
       } else {
         this.voices = [this.allData[this.currentChannel][0]];
+        $(this.$el).addClass('fukidashi');
       }
     },
     updateChannelHistory(channel, hists) {
