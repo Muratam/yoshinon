@@ -3,6 +3,8 @@ const fs = require('fs');
 const request = require('request');
 const Twitter = require('twitter');
 const {sleep} = require('sleep-async')();
+
+
 exports.Bot = class Bot {
   getSlackUser(id) {
     if (!('users' in this)) {

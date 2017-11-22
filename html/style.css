@@ -2,7 +2,7 @@ body {
     width: 100vw;
     height: 100vh;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: hidden;
     opacity:1;
 }
 .voice-wrapper{
